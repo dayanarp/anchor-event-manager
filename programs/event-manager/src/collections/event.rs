@@ -8,6 +8,7 @@ pub struct Event {
     pub name: String,
     pub ticket_price: u64,
     pub active: bool,
+    pub sponsors: u64,
     // accounts
     pub authority: Pubkey,
     pub accepted_mint: Pubkey,

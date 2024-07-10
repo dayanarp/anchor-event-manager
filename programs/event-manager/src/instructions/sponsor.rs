@@ -101,5 +101,6 @@ pub fn handle(
         ),
         quantity,
     )?;
+    ctx.accounts.event.sponsors += quantity;
     Ok(())
   }

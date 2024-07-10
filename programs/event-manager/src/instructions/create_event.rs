@@ -71,6 +71,7 @@ pub fn handle(
     ctx.accounts.event.name = name;
     ctx.accounts.event.ticket_price = ticket_price;
     ctx.accounts.event.active = true;
+    ctx.accounts.event.sponsors = 0;
     // accounts
     ctx.accounts.event.authority = ctx.accounts.authority.key();
     ctx.accounts.event.accepted_mint = ctx.accounts.accepted_mint.key();
