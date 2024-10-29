@@ -12,7 +12,7 @@ pub struct WithdrawFunds<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
             // checks only authority provided can withdraw
             authority.key().as_ref() // authority public key
         ],
@@ -34,7 +34,7 @@ pub struct WithdrawFunds<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_TREASURY_VAULT.as_ref(), // "treasury_vault" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_vault" seed
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,

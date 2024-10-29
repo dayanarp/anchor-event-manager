@@ -10,7 +10,7 @@ pub struct BuyTickets<'info> {
         mut,
         // check if the event is still active
         seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
             // checks only authority provided can withdraw
             event.authority.key().as_ref() // authority public key
         ],
@@ -31,7 +31,7 @@ pub struct BuyTickets<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_GAIN_VAULT.as_ref(), // "gain_vault" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault" seed
             event.key().as_ref() // event public key
         ],
         bump = event.gain_vault_bump,

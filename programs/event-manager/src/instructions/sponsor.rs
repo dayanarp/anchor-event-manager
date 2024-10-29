@@ -12,7 +12,7 @@ pub struct Sponsor<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
             // checks only authority provided can withdraw
             event.authority.key().as_ref() // authority public key
         ],
@@ -23,7 +23,7 @@ pub struct Sponsor<'info> {
     #[account(
       mut,
       seeds = [
-        Event::SEED_EVENT_MINT.as_ref(), // "event_mint" seed
+        <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint" seed
         event.key().as_ref() // "event public key"
       ],
       bump = event.event_mint_bump,
@@ -50,7 +50,7 @@ pub struct Sponsor<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_TREASURY_VAULT.as_ref(), // "treasury_event" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_event" seed
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,

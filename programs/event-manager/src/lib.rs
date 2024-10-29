@@ -4,7 +4,7 @@ mod collections;
 mod instructions;
 mod utils;
 
-declare_id!("3FAqGnGM4DfcAGvp3V8FbUmgjikt1jN49ppivh2zWUuE");
+declare_id!("8iSfAPbssiTxpeTYVPx4syA6VUgo2tur9nvmks4oRMsq");
 
 #[program]
 pub mod event_manager {

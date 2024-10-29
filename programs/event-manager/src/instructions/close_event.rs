@@ -5,7 +5,7 @@ pub struct CloseEvent<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
             // checks only authority provided can close the event
             authority.key().as_ref() // authority public key
         ],

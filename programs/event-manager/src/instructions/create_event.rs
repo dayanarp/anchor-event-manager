@@ -5,7 +5,7 @@ pub struct CreateEvent<'info> {
     #[account(
         init,
         seeds = [
-            Event::SEED_EVENT.as_ref(), // "event"
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event"
             authority.key().as_ref(), // event authority
         ],
         bump,
@@ -19,7 +19,7 @@ pub struct CreateEvent<'info> {
     #[account(
         init,
         seeds = [
-            Event::SEED_EVENT_MINT.as_ref(), // "event_mint"
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint"
              event.key().as_ref() // event public key
         ],
         bump,
@@ -33,7 +33,7 @@ pub struct CreateEvent<'info> {
         init,
         payer = authority,
         seeds = [
-            Event::SEED_TREASURY_VAULT.as_ref(),  // "treasury_vault"
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT),  // "treasury_vault"
             event.key().as_ref() // event public key
         ],
         bump,
@@ -46,7 +46,7 @@ pub struct CreateEvent<'info> {
         init,
         payer = authority,
         seeds = [
-            Event::SEED_GAIN_VAULT.as_ref(), // "gain_vault"
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault"
             event.key().as_ref() // event public key
         ],
         bump,

@@ -5,7 +5,7 @@ pub struct WithdrawEarnings<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
             event.authority.key().as_ref() // authority public key
         ],
         bump = event.event_bump,
@@ -15,7 +15,7 @@ pub struct WithdrawEarnings<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_EVENT_MINT.as_ref(),  // "event_mint" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT),  // "event_mint" seed
             event.key().as_ref() // event public key
         ],
         bump = event.event_mint_bump,
@@ -33,7 +33,7 @@ pub struct WithdrawEarnings<'info> {
     #[account(
         mut,
         seeds = [
-            Event::SEED_GAIN_VAULT.as_ref(), // "gain_vault" seed
+            <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault" seed
             event.key().as_ref() // event public key
         ],
         bump = event.gain_vault_bump,

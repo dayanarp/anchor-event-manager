@@ -1,6 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { EventManager } from "../target/types/event_manager";
+import type { EventManager } from "../target/types/event_manager";
+import IDL from "../target/idl/event_manager.json";
 import { BN } from "bn.js";
 import { Keypair, PublicKey } from '@solana/web3.js';
 import { createMint, createFundedWallet, createAssociatedTokenAccount } from './utils';
@@ -13,7 +14,8 @@ describe("event-manager", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(anchor.AnchorProvider.env());
 
-  const program = anchor.workspace.EventManager as Program<EventManager>;
+  //const program = anchor.workspace.EventManager as Program<EventManager>;
+  const program  = new Program(IDL as EventManager, provider)
 
   // event accounts address
   let acceptedMint: PublicKey; // example: USDC
@@ -126,7 +128,7 @@ describe("event-manager", () => {
         payerAcceptedMintAta: aliceAcceptedMintATA, // Alice USDC Account 
         event: eventPublicKey,
         authority: alice.publicKey,
-        payerEventMintAta:aliceEventMintATA, // Alice Event Mint Account
+        //payerEventMintAta:aliceEventMintATA, // Alice Event Mint Account
         treasuryVault: treasuryVault // store all Accepted mint (USDC) from sponsorships
       })
       .signers([alice])
@@ -159,7 +161,7 @@ describe("event-manager", () => {
         payerAcceptedMintAta: bobAcceptedMintATA,
         event: eventPublicKey,
         authority: bob.publicKey,
-        payerEventMintAta:bobEventMintATA,
+        //payerEventMintAta:bobEventMintATA,
         treasuryVault: treasuryVault
       })
       .signers([bob])
@@ -255,7 +257,7 @@ describe("event-manager", () => {
         acceptedMint: acceptedMint, // example: USDC
         authority: provider.wallet.publicKey, // event organizer
         treasuryVault: treasuryVault, // stores all Accepted Mint (USDC) from sponsorships
-        authotiryAcceptedMintAta: walletAcceptedMintATA, // account where the event organizer receives accepted mint(USDC)
+        //authotiryAcceptedMintAta: walletAcceptedMintATA, // account where the event organizer receives accepted mint(USDC)
       })
       .rpc();
     
