@@ -39,6 +39,17 @@ describe("event-manager", () => {
   let bobAcceptedMintATA: PublicKey; //alice accepted mint ATA
   let bobEventMintATA: PublicKey; //alice event mint ATA
 
+  // Event ID
+  let eventId:string = "EventId23";
+
+  // ---------- ANOTHER EVENT ----------------
+  let eventPublicKey2: PublicKey;
+  let eventMint2: PublicKey; // sponsorship token
+  let treasuryVault2: PublicKey;
+  let gainVault2: PublicKey;
+
+  let eventId2:string = "Event2323";
+
 
   // all this should exists **before** calling our program instructions
   before(async () => {
@@ -46,25 +57,25 @@ describe("event-manager", () => {
 
     // find event account PDA
     [eventPublicKey] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("event", "utf-8"), provider.wallet.publicKey.toBuffer()],
+      [Buffer.from(eventId, "utf-8"), Buffer.from("event", "utf-8"), provider.wallet.publicKey.toBuffer()],
       program.programId
     );
 
     // find event mint account PDA
     [eventMint] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("event_mint", "utf-8"), eventPublicKey.toBuffer()],
+      [Buffer.from("event_mint", "utf-8"), Buffer.from(eventId, "utf-8"), eventPublicKey.toBuffer()],
       program.programId
     );
 
     // find treasury vault account PDA
     [treasuryVault] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("treasury_vault", "utf-8"), eventPublicKey.toBuffer()],
+      [Buffer.from("treasury_vault", "utf-8"), Buffer.from(eventId, "utf-8"), eventPublicKey.toBuffer()],
       program.programId
     );
 
     // find gain vault account PDA
     [gainVault] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("gain_vault", "utf-8"), eventPublicKey.toBuffer()],
+      [Buffer.from("gain_vault", "utf-8"), Buffer.from(eventId, "utf-8"), eventPublicKey.toBuffer()],
       program.programId
     );
 
@@ -87,6 +98,30 @@ describe("event-manager", () => {
     // find bob event mint ata
     bobEventMintATA = await getAssociatedTokenAddress(eventMint, bob.publicKey);
 
+    // find event account PDA
+    [eventPublicKey2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(eventId2, "utf-8"), Buffer.from("event", "utf-8"), provider.wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    // find event mint account PDA
+    [eventMint2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("event_mint", "utf-8"), Buffer.from(eventId2, "utf-8"), eventPublicKey2.toBuffer()],
+      program.programId
+    );
+
+    // find treasury vault account PDA
+    [treasuryVault2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("treasury_vault", "utf-8"), Buffer.from(eventId2, "utf-8"), eventPublicKey2.toBuffer()],
+      program.programId
+    );
+
+    // find gain vault account PDA
+    [gainVault2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("gain_vault", "utf-8"), Buffer.from(eventId2, "utf-8"), eventPublicKey2.toBuffer()],
+      program.programId
+    );
+
   });
 
   // TEST: Create an Event
@@ -94,7 +129,7 @@ describe("event-manager", () => {
     const name:string = "my_event";
     const ticketPrice = new BN(2); // 2 Accepted mint (USDC)
 
-    const tx = await program.methods.createEvent(name, ticketPrice)
+    const tx = await program.methods.createEvent(eventId, name, ticketPrice)
     .accounts({
       event: eventPublicKey,
       acceptedMint: acceptedMint, // example: USDC
@@ -359,5 +394,25 @@ describe("event-manager", () => {
    );
    console.log("Event gain vault amount: ", gainVaultAccount.amount);
  });
+
+ it("Creates another Event", async () => {
+  const name:string = "my_event2";
+  const ticketPrice = new BN(2); // 2 Accepted mint (USDC)
+
+  const tx = await program.methods.createEvent(eventId2, name, ticketPrice)
+  .accounts({
+    event: eventPublicKey2,
+    acceptedMint: acceptedMint, // example: USDC
+    eventMint: eventMint2, // sponsorship token
+    treasuryVault: treasuryVault2,
+    gainVault: gainVault2,
+    authority: provider.wallet.publicKey, // event organizer
+  })
+  .rpc();
+
+   // show new event info
+   const eventAccount = await program.account.event.fetch(eventPublicKey2);
+   console.log("Event info: ", eventAccount);
+});
 
 });

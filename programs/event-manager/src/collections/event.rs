@@ -4,6 +4,8 @@ use anchor_lang::prelude::*;
 #[derive(InitSpace)]
 pub struct Event {
     // data
+    #[max_len(16)] // event name should be 16 characters or less
+    pub id: String,
     #[max_len(40)] // event name should be 40 characters or less
     pub name: String,
     pub ticket_price: u64,

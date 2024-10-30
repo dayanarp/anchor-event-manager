@@ -1,10 +1,12 @@
 use {crate::collections::Event, anchor_lang::prelude::*, anchor_spl::token::*};
 
 #[derive(Accounts)]
+#[instruction(id: String)]
 pub struct CreateEvent<'info> {
     #[account(
         init,
         seeds = [
+            id.to_string().as_ref(),
             <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event"
             authority.key().as_ref(), // event authority
         ],
@@ -20,7 +22,8 @@ pub struct CreateEvent<'info> {
         init,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint"
-             event.key().as_ref() // event public key
+            id.as_ref(), // event id
+            event.key().as_ref() // event public key
         ],
         bump,
         payer = authority, 
@@ -34,6 +37,7 @@ pub struct CreateEvent<'info> {
         payer = authority,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT),  // "treasury_vault"
+            id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump,
@@ -47,6 +51,7 @@ pub struct CreateEvent<'info> {
         payer = authority,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault"
+            id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump,
@@ -64,10 +69,12 @@ pub struct CreateEvent<'info> {
 
 pub fn handle(
     ctx: Context<CreateEvent>,
+    id: String,
     name: String,
     ticket_price: u64,
 ) -> Result<()> {
     // data
+    ctx.accounts.event.id = id;
     ctx.accounts.event.name = name;
     ctx.accounts.event.ticket_price = ticket_price;
     ctx.accounts.event.active = true;

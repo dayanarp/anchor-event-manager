@@ -8,14 +8,7 @@ use {
 pub struct BuyTickets<'info> {
     #[account(
         mut,
-        // check if the event is still active
-        seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
-            // checks only authority provided can withdraw
-            event.authority.key().as_ref() // authority public key
-        ],
-        bump = event.event_bump,
-        constraint = event.active == true @ ErrorCode::EventClosed, 
+        constraint = event.active == true @ ErrorCode::EventClosed
     )] 
     pub event: Box<Account<'info, Event>>, // event account
 
@@ -32,6 +25,7 @@ pub struct BuyTickets<'info> {
         mut,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault" seed
+            event.id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump = event.gain_vault_bump,

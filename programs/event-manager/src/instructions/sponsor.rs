@@ -9,21 +9,14 @@ use {
 
 #[derive(Accounts)]
 pub struct Sponsor<'info> {
-    #[account(
-        mut,
-        seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
-            // checks only authority provided can withdraw
-            event.authority.key().as_ref() // authority public key
-        ],
-        bump = event.event_bump,
-    )]
+    #[account(mut)]
     pub event: Box<Account<'info, Event>>, // event account
 
     #[account(
       mut,
       seeds = [
         <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint" seed
+        event.id.as_ref(), // event id
         event.key().as_ref() // "event public key"
       ],
       bump = event.event_mint_bump,
@@ -51,6 +44,7 @@ pub struct Sponsor<'info> {
         mut,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_event" seed
+            event.id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,
@@ -71,6 +65,7 @@ pub fn handle(
     quantity: u64,
   ) -> Result<()> {
     let seeds = [
+        ctx.accounts.event.id.as_ref(),
         Event::SEED_EVENT.as_bytes(),
         ctx.accounts.event.authority.as_ref(),
         &[ctx.accounts.event.event_bump],

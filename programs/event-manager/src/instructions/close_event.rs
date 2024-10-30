@@ -2,15 +2,7 @@ use {crate::collections::Event, anchor_lang::prelude::*};
 
 #[derive(Accounts)]
 pub struct CloseEvent<'info> {
-    #[account(
-        mut,
-        seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event" seed
-            // checks only authority provided can close the event
-            authority.key().as_ref() // authority public key
-        ],
-        bump = event.event_bump,
-    )]
+    #[account(mut)]
     pub event: Box<Account<'info, Event>>, // event account
 
     #[account(mut)]
