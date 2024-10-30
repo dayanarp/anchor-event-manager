@@ -27,7 +27,6 @@ pub struct WithdrawFunds<'info> {
         mut,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_vault" seed
-            event.id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,

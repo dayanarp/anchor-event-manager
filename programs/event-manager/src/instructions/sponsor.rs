@@ -16,7 +16,6 @@ pub struct Sponsor<'info> {
       mut,
       seeds = [
         <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint" seed
-        event.id.as_ref(), // event id
         event.key().as_ref() // "event public key"
       ],
       bump = event.event_mint_bump,
@@ -44,7 +43,6 @@ pub struct Sponsor<'info> {
         mut,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_event" seed
-            event.id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,

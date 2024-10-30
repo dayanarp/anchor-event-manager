@@ -25,7 +25,6 @@ pub struct BuyTickets<'info> {
         mut,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault" seed
-            event.id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump = event.gain_vault_bump,

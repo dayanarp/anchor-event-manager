@@ -40,7 +40,7 @@ describe("event-manager", () => {
   let bobEventMintATA: PublicKey; //alice event mint ATA
 
   // Event ID
-  let eventId:string = "EventId23";
+  let eventId:string = Date.now().toString();
 
   // ---------- ANOTHER EVENT ----------------
   let eventPublicKey2: PublicKey;
@@ -48,8 +48,7 @@ describe("event-manager", () => {
   let treasuryVault2: PublicKey;
   let gainVault2: PublicKey;
 
-  let eventId2:string = "Event2323";
-
+  let eventId2:string = (Date.now() + 1).toString();
 
   // all this should exists **before** calling our program instructions
   before(async () => {
@@ -63,19 +62,19 @@ describe("event-manager", () => {
 
     // find event mint account PDA
     [eventMint] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("event_mint", "utf-8"), Buffer.from(eventId, "utf-8"), eventPublicKey.toBuffer()],
+      [Buffer.from("event_mint", "utf-8"), eventPublicKey.toBuffer()],
       program.programId
     );
 
     // find treasury vault account PDA
     [treasuryVault] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("treasury_vault", "utf-8"), Buffer.from(eventId, "utf-8"), eventPublicKey.toBuffer()],
+      [Buffer.from("treasury_vault", "utf-8"),  eventPublicKey.toBuffer()],
       program.programId
     );
 
     // find gain vault account PDA
     [gainVault] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("gain_vault", "utf-8"), Buffer.from(eventId, "utf-8"), eventPublicKey.toBuffer()],
+      [Buffer.from("gain_vault", "utf-8"),  eventPublicKey.toBuffer()],
       program.programId
     );
 
@@ -106,19 +105,19 @@ describe("event-manager", () => {
 
     // find event mint account PDA
     [eventMint2] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("event_mint", "utf-8"), Buffer.from(eventId2, "utf-8"), eventPublicKey2.toBuffer()],
+      [Buffer.from("event_mint", "utf-8"), eventPublicKey2.toBuffer()],
       program.programId
     );
 
     // find treasury vault account PDA
     [treasuryVault2] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("treasury_vault", "utf-8"), Buffer.from(eventId2, "utf-8"), eventPublicKey2.toBuffer()],
+      [Buffer.from("treasury_vault", "utf-8"), eventPublicKey2.toBuffer()],
       program.programId
     );
 
     // find gain vault account PDA
     [gainVault2] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("gain_vault", "utf-8"), Buffer.from(eventId2, "utf-8"), eventPublicKey2.toBuffer()],
+      [Buffer.from("gain_vault", "utf-8"), eventPublicKey2.toBuffer()],
       program.programId
     );
 

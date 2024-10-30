@@ -22,7 +22,6 @@ pub struct CreateEvent<'info> {
         init,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint"
-            id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump,
@@ -37,7 +36,6 @@ pub struct CreateEvent<'info> {
         payer = authority,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT),  // "treasury_vault"
-            id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump,
@@ -51,7 +49,6 @@ pub struct CreateEvent<'info> {
         payer = authority,
         seeds = [
             <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault"
-            id.as_ref(), // event id
             event.key().as_ref() // event public key
         ],
         bump,
