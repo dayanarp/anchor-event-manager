@@ -2,14 +2,7 @@ use {crate::collections::Event, anchor_lang::prelude::*, anchor_spl::token::*, c
 
 #[derive(Accounts)]
 pub struct WithdrawEarnings<'info> {
-    #[account(
-        mut,
-        seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
-            event.authority.key().as_ref() // authority public key
-        ],
-        bump = event.event_bump,
-    )]
+    #[account(mut)]
     pub event: Box<Account<'info, Event>>, // event account
 
     #[account(
@@ -74,6 +67,7 @@ pub fn handle(ctx: Context<WithdrawEarnings>) -> Result<()> {
     
     // seed from event account PDA
     let seeds = [
+        ctx.accounts.event.id.as_ref(),
         Event::SEED_EVENT.as_bytes(), // "event" seed
         ctx.accounts.event.authority.as_ref(), // event authority
         &[ctx.accounts.event.event_bump], // event bump

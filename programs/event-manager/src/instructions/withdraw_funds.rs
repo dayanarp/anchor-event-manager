@@ -9,15 +9,7 @@ use {
 #[derive(Accounts)]
 #[instruction(amount: u64)]
 pub struct WithdrawFunds<'info> {
-    #[account(
-        mut,
-        seeds = [
-            Event::SEED_EVENT.as_ref(), // "event" seed
-            // checks only authority provided can withdraw
-            authority.key().as_ref() // authority public key
-        ],
-        bump = event.event_bump,
-    )]
+    #[account(mut)]
     pub event: Box<Account<'info, Event>>, // event account
 
     pub accepted_mint: Box<Account<'info, Mint>>, // accepted mint
@@ -56,6 +48,7 @@ pub fn handle(
 ) -> Result<()> {
     let seeds = [
         // seeds from event PDA 
+        ctx.accounts.event.id.as_ref(),
         Event::SEED_EVENT.as_bytes(), // "event" seed
         ctx.accounts.event.authority.as_ref(), // authority public key
         &[ctx.accounts.event.event_bump], // bump

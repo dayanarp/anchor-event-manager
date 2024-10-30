@@ -1,5 +1,3 @@
-use anchor_lang::prelude::*;
-
 // calculate the % represent by the <amount> over the <total>
 // example:
 // total = 53 sponsorships (total event tokens)

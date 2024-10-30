@@ -12,10 +12,11 @@ pub mod event_manager {
 
     pub fn create_event(
         ctx: Context<CreateEvent>,
+        id: String,
         name: String,
         ticket_price: u64,
     ) -> Result<()> {
-        instructions::create_event::handle(ctx, name, ticket_price)
+        instructions::create_event::handle(ctx, id, name, ticket_price)
     }
 
      // sponsor event (get event mint tokens)

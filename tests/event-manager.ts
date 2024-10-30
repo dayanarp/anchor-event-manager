@@ -37,6 +37,8 @@ describe("event-manager", () => {
   let bobAcceptedMintATA: PublicKey; //alice accepted mint ATA
   let bobEventMintATA: PublicKey; //alice event mint ATA
 
+  let id = Date.now().toString();
+
 
   // all this should exists **before** calling our program instructions
   before(async () => {
@@ -44,7 +46,7 @@ describe("event-manager", () => {
 
     // find event account PDA
     [eventPublicKey] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("event", "utf-8"), provider.wallet.publicKey.toBuffer()],
+      [Buffer.from(id, "utf-8"), Buffer.from("event", "utf-8"), provider.wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -92,7 +94,7 @@ describe("event-manager", () => {
     const name:string = "my_event";
     const ticketPrice = new BN(2); // 2 Accepted mint (USDC)
 
-    const tx = await program.methods.createEvent(name, ticketPrice)
+    const tx = await program.methods.createEvent(id, name, ticketPrice)
     .accounts({
       event: eventPublicKey,
       acceptedMint: acceptedMint, // example: USDC

@@ -1,10 +1,12 @@
 use {crate::collections::Event, anchor_lang::prelude::*, anchor_spl::token::*};
 
 #[derive(Accounts)]
+#[instruction(id: String)]
 pub struct CreateEvent<'info> {
     #[account(
         init,
         seeds = [
+            id.as_ref(), // event ID
             Event::SEED_EVENT.as_ref(), // "event"
             authority.key().as_ref(), // event authority
         ],
@@ -64,10 +66,12 @@ pub struct CreateEvent<'info> {
 
 pub fn handle(
     ctx: Context<CreateEvent>,
+    id: String,
     name: String,
     ticket_price: u64,
 ) -> Result<()> {
     // data
+    ctx.accounts.event.id = id;
     ctx.accounts.event.name = name;
     ctx.accounts.event.ticket_price = ticket_price;
     ctx.accounts.event.active = true;
