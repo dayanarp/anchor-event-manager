@@ -11,6 +11,10 @@ pub struct Event {
     pub ticket_price: u64,
     pub active: bool,
     pub sponsors: u64,
+    pub tickets_sold: u64,
+    // vaults
+    pub treasury_vault_total: u64,
+    pub gain_vault_total: u64,
     // accounts
     pub authority: Pubkey,
     pub accepted_mint: Pubkey,

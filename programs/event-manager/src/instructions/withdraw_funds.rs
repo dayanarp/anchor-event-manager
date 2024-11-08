@@ -67,5 +67,8 @@ pub fn handle(
         ),
         amount, // amount to withdraw
     )?;
+
+    ctx.accounts.event.treasury_vault_total = ctx.accounts.event.treasury_vault_total - amount;
+    
     Ok(())
 }

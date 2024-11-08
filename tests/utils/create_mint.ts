@@ -8,7 +8,7 @@ import {
   // Create new Token (Mint Account)
   export const createMint = async (
     provider: AnchorProvider,
-    decimals = 0 // no decimals
+    decimals = 6 // no decimals
   ): Promise<web3.PublicKey> => {
     // token key pair
     const tokenMint = new web3.Keypair();

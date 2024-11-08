@@ -31,6 +31,8 @@ pub struct BuyTickets<'info> {
       )]
     pub gain_vault: Box<Account<'info, TokenAccount>>, // event gain vault account
 
+    pub accepted_mint: Box<Account<'info, Mint>>, // accepted mint
+
     #[account(mut)]
     pub authority: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
@@ -49,6 +51,10 @@ pub fn handle(
         .ticket_price
         .checked_mul(quantity)
         .unwrap();
+    // calculate decimals
+    let multiplier = 10_u64.pow(ctx.accounts.accepted_mint.decimals as u32) as u64;
+    // amount * decimals
+    let total = amount.checked_mul(multiplier).unwrap();
     // Charge the amount
     transfer(
         CpiContext::new(
@@ -59,8 +65,10 @@ pub fn handle(
                 authority: ctx.accounts.authority.to_account_info(), // payer (authority of the from account)
             },
         ),
-        amount, // amount to charge
+        total, // amount to charge
     )?;
+    ctx.accounts.event.gain_vault_total += total;
+    ctx.accounts.event.tickets_sold += quantity;
     Ok(())
   }
 

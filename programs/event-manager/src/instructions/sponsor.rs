@@ -49,6 +49,8 @@ pub struct Sponsor<'info> {
       )]
     pub treasury_vault: Box<Account<'info, TokenAccount>>, // event treasury token account
 
+    pub accepted_mint: Box<Account<'info, Mint>>, // accepted mint
+
     #[account(mut)]
     pub authority: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
@@ -62,6 +64,12 @@ pub fn handle(
     ctx: Context<Sponsor>,
     quantity: u64,
   ) -> Result<()> {
+    // quantity * amount
+    // calculate decimals
+    let multiplier = 10_u64.pow(ctx.accounts.accepted_mint.decimals as u32) as u64;
+    // amount * decimals
+    let total = quantity.checked_mul(multiplier).unwrap();
+    // calculate seeds
     let seeds = [
         ctx.accounts.event.id.as_ref(),
         Event::SEED_EVENT.as_bytes(),
@@ -79,7 +87,7 @@ pub fn handle(
                 authority: ctx.accounts.authority.to_account_info(),
             },
         ),
-        quantity,
+        total
     )?;
     // Transfer the token
     mint_to(
@@ -95,5 +103,6 @@ pub fn handle(
         quantity,
     )?;
     ctx.accounts.event.sponsors += quantity;
+    ctx.accounts.event.treasury_vault_total += total;
     Ok(())
   }

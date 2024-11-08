@@ -33,6 +33,8 @@ pub struct WithdrawEarnings<'info> {
       )]
     pub gain_vault: Box<Account<'info, TokenAccount>>, // event gain vault account
 
+    pub accepted_mint: Box<Account<'info, Mint>>, // accepted mint
+
     #[account(mut)]
     pub authority: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
@@ -86,6 +88,7 @@ pub fn handle(ctx: Context<WithdrawEarnings>) -> Result<()> {
         ),
         total_to_deposit, // total user earnings
     )?;
-
+    ctx.accounts.event.sponsors = ctx.accounts.event.sponsors - tokens_to_burn;
+    ctx.accounts.event.gain_vault_total = ctx.accounts.event.gain_vault_total - total_to_deposit;
     Ok(())
 }
