@@ -20,3 +20,13 @@ pub fn calculate_earnings(total: u64, share: f64) -> u64 {
     let earnings = (temp as f64)/(100.);
     earnings.floor() as u64 
 }
+
+pub fn calculate_total(quantity: u64, price: f64, decimals: u8) -> u64{
+   let result = price * (decimals as f64) * (quantity as f64);
+   result as u64
+}
+
+pub fn calculate_amount(amount: f64, decimals: u8) -> u64 {
+    let result = amount * (decimals as f64);
+    result as u64
+ }

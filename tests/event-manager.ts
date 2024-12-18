@@ -82,7 +82,7 @@ describe("event-manager", () => {
     alice = await createFundedWallet(provider, 3);
     // create alice accepted mint ata with 100 accepted mint
     // Accepted mint = USDC  -> alice wallet = 100 USDC 
-    aliceAcceptedMintATA = await createAssociatedTokenAccount(provider,acceptedMint,500, alice);
+    aliceAcceptedMintATA = await createAssociatedTokenAccount(provider,acceptedMint,5000, alice);
     // find alice event mint ata (only finds address)
     aliceEventMintATA = await getAssociatedTokenAddress(eventMint, alice.publicKey);
 
@@ -91,9 +91,9 @@ describe("event-manager", () => {
     walletAcceptedMintATA = await getAssociatedTokenAddress(acceptedMint, provider.wallet.publicKey);
 
     // create bob wallet with lamports
-    bob = await createFundedWallet(provider);
+    bob = await createFundedWallet(provider, 3);
     // create bob accepted mint ata
-    bobAcceptedMintATA = await createAssociatedTokenAccount(provider,acceptedMint,500, bob)
+    bobAcceptedMintATA = await createAssociatedTokenAccount(provider,acceptedMint,5000, bob)
     // find bob event mint ata
     bobEventMintATA = await getAssociatedTokenAddress(eventMint, bob.publicKey);
 
@@ -126,9 +126,11 @@ describe("event-manager", () => {
   // TEST: Create an Event
   it("Creates a new Event", async () => {
     const name:string = "my_event";
-    const ticketPrice = new BN(2); // 2 Accepted mint (USDC)
+    const description= "best event ever!!";
+    const ticketPrice = 2.1; // 2 Accepted mint (USDC)
+    const tokenPrice = 5.0; // 5 Accepted mint (USDC)
 
-    const tx = await program.methods.createEvent(eventId, name, ticketPrice)
+    const tx = await program.methods.createEvent(eventId, name, description, ticketPrice, tokenPrice)
     .accounts({
       event: eventPublicKey,
       acceptedMint: acceptedMint, // example: USDC
@@ -158,9 +160,10 @@ describe("event-manager", () => {
     await program.methods
       .sponsorEvent(quantity)
       .accounts({
-        eventMint: eventMint, // 1:1 with USDC
-        payerAcceptedMintAta: aliceAcceptedMintATA, // Alice USDC Account 
         event: eventPublicKey,
+        eventMint: eventMint, // 1:1 with USDC
+        acceptedMint: acceptedMint,
+        payerAcceptedMintAta: aliceAcceptedMintATA, // Alice USDC Account 
         authority: alice.publicKey,
         //payerEventMintAta:aliceEventMintATA, // Alice Event Mint Account
         treasuryVault: treasuryVault // store all Accepted mint (USDC) from sponsorships
@@ -194,6 +197,7 @@ describe("event-manager", () => {
         eventMint: eventMint,
         payerAcceptedMintAta: bobAcceptedMintATA,
         event: eventPublicKey,
+        acceptedMint: acceptedMint,
         authority: bob.publicKey,
         //payerEventMintAta:bobEventMintATA,
         treasuryVault: treasuryVault
@@ -226,6 +230,7 @@ describe("event-manager", () => {
          payerAcceptedMintAta: aliceAcceptedMintATA, // Alice Accepted mint (USDC) account
          event: eventPublicKey,
          authority: alice.publicKey,
+         acceptedMint: acceptedMint,
          gainVault: gainVault // stores all accepted mint (USDC) from tickets purchase
        })
        .signers([alice])
@@ -258,6 +263,7 @@ describe("event-manager", () => {
        .accounts({
          payerAcceptedMintAta: bobAcceptedMintATA,
          event: eventPublicKey,
+         acceptedMint:acceptedMint,
          authority: bob.publicKey,
          gainVault: gainVault
        })
@@ -283,7 +289,7 @@ describe("event-manager", () => {
     );
     console.log("Event treasury vault total before: ", treasuryVaultAccount.amount);
 
-    const amount = new BN(1); // 1 USDC
+    const amount = 1.0; // 1 USDC
     await program.methods
       .withdrawFunds(amount)
       .accounts({
@@ -340,8 +346,9 @@ describe("event-manager", () => {
        .accounts({
          payerAcceptedMintAta: aliceAcceptedMintATA,
          event: eventPublicKey,
+         acceptedMint: acceptedMint,
          authority: alice.publicKey,
-         gainVault: gainVault
+         gainVault: gainVault,
        })
        .signers([alice])
        .rpc();
@@ -357,7 +364,7 @@ describe("event-manager", () => {
     
     // show total sponsorships
     const eventAccount = await program.account.event.fetch(eventPublicKey);
-    console.log("Event total sponsorships: ", eventAccount.sponsors.toNumber());
+    console.log("Event total sponsorships: ", eventAccount.totalSponsors.toNumber());
 
    // show event gain vault amount
    let gainVaultAccount = await getAccount(
@@ -396,9 +403,11 @@ describe("event-manager", () => {
 
  it("Creates another Event", async () => {
   const name:string = "my_event2";
-  const ticketPrice = new BN(2); // 2 Accepted mint (USDC)
+  const description = "the true best event ever!!"
+  const ticketPrice =0.32; // 2 Accepted mint (USDC)
+  const tokenPrice = 2.15; // 2 Accepted mint (USDC)
 
-  const tx = await program.methods.createEvent(eventId2, name, ticketPrice)
+  const tx = await program.methods.createEvent(eventId2, name, description, ticketPrice, tokenPrice)
   .accounts({
     event: eventPublicKey2,
     acceptedMint: acceptedMint, // example: USDC

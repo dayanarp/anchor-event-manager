@@ -8,9 +8,17 @@ pub struct Event {
     pub id: String,
     #[max_len(40)] // event name should be 40 characters or less
     pub name: String,
-    pub ticket_price: u64,
+    #[max_len(150)] // event description should be 150 characters or less
+    pub description: String,
+    // prices
+    pub ticket_price: f64,
+    pub token_price: f64,
+    // event status
     pub active: bool,
-    pub sponsors: u64,
+    pub total_sponsors: u64, // event all time sponsors
+    pub current_sponsors: u64, // event current sponsors
+    pub tokens_sold: u64, // event sponsor tokens sold
+    pub tickets_sold: u64, // event tickets sold
     // accounts
     pub authority: Pubkey,
     pub accepted_mint: Pubkey,

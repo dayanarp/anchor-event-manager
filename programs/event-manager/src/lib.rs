@@ -14,9 +14,11 @@ pub mod event_manager {
         ctx: Context<CreateEvent>,
         id: String,
         name: String,
-        ticket_price: u64,
+        description: String,
+        ticket_price: f64,
+        token_price: f64
     ) -> Result<()> {
-        instructions::create_event::handle(ctx, id, name, ticket_price)
+        instructions::create_event::handle(ctx, id, name, description, ticket_price, token_price)
     }
 
      // sponsor event (get event mint tokens)
@@ -38,7 +40,7 @@ pub mod event_manager {
      // withdraw funds
      pub fn withdraw_funds(
         ctx: Context<WithdrawFunds>,
-        amount: u64,
+        amount: f64,
     ) -> Result<()> {
         instructions::withdraw_funds::handle(ctx, amount)
     }

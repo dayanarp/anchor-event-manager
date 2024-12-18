@@ -1,9 +1,8 @@
 use {
-    crate::collections::Event, 
+    crate::{collections::event::Event, utils::calculate_total}, 
     anchor_lang::prelude::*, 
     anchor_spl::{
-        token::*,
-        associated_token::*,
+        associated_token::*, token::*
     },
 };
 
@@ -15,7 +14,7 @@ pub struct Sponsor<'info> {
     #[account(
       mut,
       seeds = [
-        <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint" seed
+        Event::SEED_EVENT_MINT.as_bytes(), // "event_mint" seed
         event.key().as_ref() // "event public key"
       ],
       bump = event.event_mint_bump,
@@ -42,12 +41,14 @@ pub struct Sponsor<'info> {
     #[account(
         mut,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_event" seed
+            Event::SEED_TREASURY_VAULT.as_bytes(), // "treasury_event" seed
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,
       )]
     pub treasury_vault: Box<Account<'info, TokenAccount>>, // event treasury token account
+
+    pub accepted_mint: Box<Account<'info, Mint>>, // accepted mint
 
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -62,6 +63,11 @@ pub fn handle(
     ctx: Context<Sponsor>,
     quantity: u64,
   ) -> Result<()> {
+
+    // total to transfer = quantity * price * accepted mint decimals
+    let total = calculate_total(quantity, ctx.accounts.event.token_price, ctx.accounts.accepted_mint.decimals);
+
+    // calculate seeds
     let seeds = [
         ctx.accounts.event.id.as_ref(),
         Event::SEED_EVENT.as_bytes(),
@@ -79,9 +85,9 @@ pub fn handle(
                 authority: ctx.accounts.authority.to_account_info(),
             },
         ),
-        quantity,
+        total,
     )?;
-    // Transfer the token
+    // Mint the token
     mint_to(
         CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
@@ -94,6 +100,8 @@ pub fn handle(
         ),
         quantity,
     )?;
-    ctx.accounts.event.sponsors += quantity;
+    ctx.accounts.event.tokens_sold += quantity;
+    ctx.accounts.event.total_sponsors += 1;
+    ctx.accounts.event.current_sponsors +=1;
     Ok(())
   }

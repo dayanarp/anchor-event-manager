@@ -1,7 +1,8 @@
 use {
-    crate::collections::Event, 
+    crate::collections::event::Event, 
     anchor_lang::prelude::*, 
-    anchor_spl::token::*
+    anchor_spl::token::*,
+    crate::utils::calculate_total
 };
 
 #[derive(Accounts)]
@@ -24,12 +25,14 @@ pub struct BuyTickets<'info> {
     #[account(
         mut,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault" seed
+            Event::SEED_GAIN_VAULT.as_bytes(), // "gain_vault" seed
             event.key().as_ref() // event public key
         ],
         bump = event.gain_vault_bump,
       )]
     pub gain_vault: Box<Account<'info, TokenAccount>>, // event gain vault account
+
+    pub accepted_mint: Box<Account<'info, Mint>>, // accepted mint
 
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -42,13 +45,10 @@ pub fn handle(
     ctx: Context<BuyTickets>,
     quantity: u64,
   ) -> Result<()> {
-    // calculate amount to charge (quantity * token_price)
-    let amount = ctx
-        .accounts
-        .event
-        .ticket_price
-        .checked_mul(quantity)
-        .unwrap();
+
+    // total to transfer = quantity * price * accepted mint decimals
+    let total = calculate_total(quantity, ctx.accounts.event.ticket_price, ctx.accounts.accepted_mint.decimals);
+    
     // Charge the amount
     transfer(
         CpiContext::new(
@@ -59,8 +59,9 @@ pub fn handle(
                 authority: ctx.accounts.authority.to_account_info(), // payer (authority of the from account)
             },
         ),
-        amount, // amount to charge
+        total, // amount to charge
     )?;
+    ctx.accounts.event.tickets_sold += quantity;
     Ok(())
   }
 

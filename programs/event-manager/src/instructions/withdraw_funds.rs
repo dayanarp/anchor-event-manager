@@ -1,13 +1,14 @@
 use {
-    crate::collections::Event, 
+    crate::collections::event::Event, 
     anchor_lang::prelude::*, 
     anchor_spl::{
         associated_token::*, token::*
-    }
+    },
+    crate::utils::calculate_amount
 };
 
 #[derive(Accounts)]
-#[instruction(amount: u64)]
+#[instruction(amount: f64)]
 pub struct WithdrawFunds<'info> {
     #[account(mut)]
     pub event: Box<Account<'info, Event>>, // event account
@@ -26,11 +27,11 @@ pub struct WithdrawFunds<'info> {
     #[account(
         mut,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT), // "treasury_vault" seed
+            Event::SEED_TREASURY_VAULT.as_bytes(), // "treasury_vault" seed
             event.key().as_ref() // event public key
         ],
         bump = event.treasury_vault_bump,
-        constraint = treasury_vault.amount >= amount
+        constraint = treasury_vault.amount >= (amount as u64)
       )]
     pub treasury_vault: Box<Account<'info, TokenAccount>>, // event treasury account
 
@@ -44,8 +45,11 @@ pub struct WithdrawFunds<'info> {
 
 pub fn handle(
     ctx: Context<WithdrawFunds>,
-    amount: u64,
+    amount: f64,
 ) -> Result<()> {
+    // calculate total amount = amount * decimals
+    let total = calculate_amount(amount, ctx.accounts.accepted_mint.decimals);
+
     let seeds = [
         // seeds from event PDA 
         ctx.accounts.event.id.as_ref(), // event id
@@ -65,7 +69,7 @@ pub fn handle(
             },
             signer, // event PDA seeds
         ),
-        amount, // amount to withdraw
+        total, // amount to withdraw
     )?;
     Ok(())
 }

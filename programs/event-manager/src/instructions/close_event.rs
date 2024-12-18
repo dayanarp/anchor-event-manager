@@ -1,4 +1,4 @@
-use {crate::collections::Event, anchor_lang::prelude::*};
+use {crate::collections::event::Event, anchor_lang::prelude::*};
 
 #[derive(Accounts)]
 pub struct CloseEvent<'info> {

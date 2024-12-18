@@ -7,7 +7,7 @@ pub struct CreateEvent<'info> {
         init,
         seeds = [
             id.to_string().as_ref(),
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT), // "event"
+            Event::SEED_EVENT.as_bytes(), // "event"
             authority.key().as_ref(), // event authority
         ],
         bump,
@@ -21,7 +21,7 @@ pub struct CreateEvent<'info> {
     #[account(
         init,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT), // "event_mint"
+            Event::SEED_EVENT_MINT.as_bytes(), // "event_mint"
             event.key().as_ref() // event public key
         ],
         bump,
@@ -35,7 +35,7 @@ pub struct CreateEvent<'info> {
         init,
         payer = authority,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_TREASURY_VAULT),  // "treasury_vault"
+            Event::SEED_TREASURY_VAULT.as_bytes(),  // "treasury_vault"
             event.key().as_ref() // event public key
         ],
         bump,
@@ -48,7 +48,7 @@ pub struct CreateEvent<'info> {
         init,
         payer = authority,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault"
+            Event::SEED_GAIN_VAULT.as_bytes(), // "gain_vault"
             event.key().as_ref() // event public key
         ],
         bump,
@@ -68,14 +68,23 @@ pub fn handle(
     ctx: Context<CreateEvent>,
     id: String,
     name: String,
-    ticket_price: u64,
+    description: String,
+    ticket_price: f64,
+    token_price: f64
 ) -> Result<()> {
     // data
     ctx.accounts.event.id = id;
     ctx.accounts.event.name = name;
+    ctx.accounts.event.description = description;
+    // prices
     ctx.accounts.event.ticket_price = ticket_price;
+    ctx.accounts.event.token_price = token_price;
+    // event status
     ctx.accounts.event.active = true;
-    ctx.accounts.event.sponsors = 0;
+    ctx.accounts.event.total_sponsors = 0;
+    ctx.accounts.event.current_sponsors = 0;
+    ctx.accounts.event.tickets_sold = 0;
+    ctx.accounts.event.tokens_sold = 0;
     // accounts
     ctx.accounts.event.authority = ctx.accounts.authority.key();
     ctx.accounts.event.accepted_mint = ctx.accounts.accepted_mint.key();

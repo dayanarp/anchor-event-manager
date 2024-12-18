@@ -1,4 +1,4 @@
-use {crate::collections::Event, anchor_lang::prelude::*, anchor_spl::token::*, crate::utils::*};
+use {crate::collections::event::Event, anchor_lang::prelude::*, anchor_spl::token::*, crate::utils::*};
 
 #[derive(Accounts)]
 pub struct WithdrawEarnings<'info> {
@@ -8,7 +8,7 @@ pub struct WithdrawEarnings<'info> {
     #[account(
         mut,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_EVENT_MINT),  // "event_mint" seed
+            Event::SEED_EVENT_MINT.as_bytes(),  // "event_mint" seed
             event.key().as_ref() // event public key
         ],
         bump = event.event_mint_bump,
@@ -26,7 +26,7 @@ pub struct WithdrawEarnings<'info> {
     #[account(
         mut,
         seeds = [
-            <str as AsRef<[u8]>>::as_ref(Event::SEED_GAIN_VAULT), // "gain_vault" seed
+            Event::SEED_GAIN_VAULT.as_bytes(), // "gain_vault" seed
             event.key().as_ref() // event public key
         ],
         bump = event.gain_vault_bump,
@@ -41,8 +41,8 @@ pub struct WithdrawEarnings<'info> {
 }
 
 pub fn handle(ctx: Context<WithdrawEarnings>) -> Result<()> {
-    // total event mint tokens sold (total in treasury vault)
-    let total_tokens = ctx.accounts.event.sponsors; 
+    // total event mint tokens sold
+    let total_tokens = ctx.accounts.event.tokens_sold; 
     // event mint tokens owned by the user
     let tokens_to_burn = ctx.accounts.user_event_mint_ata.amount;
     // total earnings from tickets (total in gain vault)
@@ -86,6 +86,6 @@ pub fn handle(ctx: Context<WithdrawEarnings>) -> Result<()> {
         ),
         total_to_deposit, // total user earnings
     )?;
-
+    ctx.accounts.event.current_sponsors -= 1;
     Ok(())
 }
