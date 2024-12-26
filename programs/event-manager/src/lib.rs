@@ -21,12 +21,16 @@ pub mod event_manager {
         instructions::create_event::handle(ctx, id, name, description, ticket_price, token_price)
     }
 
+    pub fn delete_event(ctx: Context<DeleteEvent>) -> Result<()>{
+        instructions::delete_event::handle(ctx)
+    }
+
      // sponsor event (get event mint tokens)
      pub fn sponsor_event (
-        ctx: Context<Sponsor>,
+        ctx: Context<SponsorEvent>,
         quantity: u64,
     ) -> Result<()> {
-        instructions::sponsor::handle(ctx, quantity)
+        instructions::sponsor_event::handle(ctx, quantity)
     }
 
     // buy tickets
@@ -47,9 +51,9 @@ pub mod event_manager {
 
     // close event
     pub fn close_event (
-        ctx: Context<CloseEvent>
+        ctx: Context<FinalizeEvent>
     ) -> Result<()> {
-        instructions::close_event::handle(ctx)
+        instructions::finalize_event::handle(ctx)
     }
 
     // withdraw earnings

@@ -70,4 +70,3 @@ pub enum ErrorCode {
     #[msg("You can't buy tickets, the Event is already closed")]
     EventClosed,
 }
-

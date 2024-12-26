@@ -132,11 +132,7 @@ describe("event-manager", () => {
 
     const tx = await program.methods.createEvent(eventId, name, description, ticketPrice, tokenPrice)
     .accounts({
-      event: eventPublicKey,
       acceptedMint: acceptedMint, // example: USDC
-      eventMint: eventMint, // sponsorship token
-      treasuryVault: treasuryVault,
-      gainVault: gainVault,
       authority: provider.wallet.publicKey, // event organizer
     })
     .rpc();
@@ -161,12 +157,10 @@ describe("event-manager", () => {
       .sponsorEvent(quantity)
       .accounts({
         event: eventPublicKey,
-        eventMint: eventMint, // 1:1 with USDC
         acceptedMint: acceptedMint,
         payerAcceptedMintAta: aliceAcceptedMintATA, // Alice USDC Account 
         authority: alice.publicKey,
         //payerEventMintAta:aliceEventMintATA, // Alice Event Mint Account
-        treasuryVault: treasuryVault // store all Accepted mint (USDC) from sponsorships
       })
       .signers([alice])
       .rpc();
@@ -194,13 +188,10 @@ describe("event-manager", () => {
     await program.methods
       .sponsorEvent(quantity)
       .accounts({
-        eventMint: eventMint,
         payerAcceptedMintAta: bobAcceptedMintATA,
         event: eventPublicKey,
         acceptedMint: acceptedMint,
         authority: bob.publicKey,
-        //payerEventMintAta:bobEventMintATA,
-        treasuryVault: treasuryVault
       })
       .signers([bob])
       .rpc();
@@ -231,7 +222,6 @@ describe("event-manager", () => {
          event: eventPublicKey,
          authority: alice.publicKey,
          acceptedMint: acceptedMint,
-         gainVault: gainVault // stores all accepted mint (USDC) from tickets purchase
        })
        .signers([alice])
        .rpc();
@@ -265,7 +255,6 @@ describe("event-manager", () => {
          event: eventPublicKey,
          acceptedMint:acceptedMint,
          authority: bob.publicKey,
-         gainVault: gainVault
        })
        .signers([bob])
        .rpc();
@@ -296,8 +285,6 @@ describe("event-manager", () => {
         event: eventPublicKey,
         acceptedMint: acceptedMint, // example: USDC
         authority: provider.wallet.publicKey, // event organizer
-        treasuryVault: treasuryVault, // stores all Accepted Mint (USDC) from sponsorships
-        //authotiryAcceptedMintAta: walletAcceptedMintATA, // account where the event organizer receives accepted mint(USDC)
       })
       .rpc();
     
@@ -348,7 +335,6 @@ describe("event-manager", () => {
          event: eventPublicKey,
          acceptedMint: acceptedMint,
          authority: alice.publicKey,
-         gainVault: gainVault,
        })
        .signers([alice])
        .rpc();
@@ -386,9 +372,7 @@ describe("event-manager", () => {
        userEventMintAta: aliceEventMintATA,
        event: eventPublicKey,
        authority: alice.publicKey,
-       gainVault: gainVault,
        userAcceptedMintAta: aliceAcceptedMintATA,
-       eventMint: eventMint
      })
      .signers([alice])
      .rpc();
@@ -409,11 +393,7 @@ describe("event-manager", () => {
 
   const tx = await program.methods.createEvent(eventId2, name, description, ticketPrice, tokenPrice)
   .accounts({
-    event: eventPublicKey2,
     acceptedMint: acceptedMint, // example: USDC
-    eventMint: eventMint2, // sponsorship token
-    treasuryVault: treasuryVault2,
-    gainVault: gainVault2,
     authority: provider.wallet.publicKey, // event organizer
   })
   .rpc();

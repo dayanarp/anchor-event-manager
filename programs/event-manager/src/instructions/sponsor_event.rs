@@ -7,7 +7,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct Sponsor<'info> {
+pub struct SponsorEvent<'info> {
     #[account(mut)]
     pub event: Box<Account<'info, Event>>, // event account
 
@@ -60,7 +60,7 @@ pub struct Sponsor<'info> {
 }
 
 pub fn handle(
-    ctx: Context<Sponsor>,
+    ctx: Context<SponsorEvent>,
     quantity: u64,
   ) -> Result<()> {
 
